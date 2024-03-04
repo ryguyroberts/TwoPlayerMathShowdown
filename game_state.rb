@@ -1,38 +1,29 @@
 class GameState
   PLAYER1 = "Player 1"
   PLAYER2 = "Player 2"
+  LIVES = 3
 
   ## Access Controls
-  attr_reader :current_player
-  attr_reader :game_over
-  attr_reader :winner
-  
+  attr_reader :current_player, :game_over, :winner
 
   ## ContrucTOR
   def initialize
-    @player1_lives = 3
-    @player2_lives = 3
+    @player_lives = { PLAYER1 => LIVES, PLAYER2 => LIVES }
     @game_over = false
     @current_player = PLAYER1
-    @winner = ""
+    @winner = nil
   end
 
   def get_score
-    "P1 #{@player1_lives}/3 P2 #{@player2_lives}/3"
+    "P1 #{@player_lives[PLAYER1]}/3 P2 #{@player_lives[PLAYER2]}/3"
   end
 
   # Takes life away and sets winner if someone reaches zero and game over
   def lose_life(current_player)
-    if current_player == PLAYER1
-      @player1_lives -= 1
-      @game_over = true if @player1_lives == 0
-      @winner = PLAYER2
-    elsif current_player == PLAYER2
-      @player2_lives -= 1
-      @game_over = true if @player2_lives == 0
-      @winner = PLAYER1
-    else
-      puts "Invalid player!"
+    @player_lives[current_player] -= 1
+    if @player_lives[current_player].zero?
+      @game_over = true
+      @winner = (current_player == PLAYER1) ? PLAYER2 : PLAYER1
     end
   end
 
@@ -42,13 +33,10 @@ class GameState
 
   # Winner string
   def get_winner
-    if @winner == PLAYER1
-      "Player 1 wins with a score of #{@player1_lives}/3"
-    elsif @winner == PLAYER2
-      "Player 2 wins with a score of #{@player2_lives}/3"
+    if @winner
+      "#{@winner} wins with a score of #{@player_lives[@winner]}/#{LIVES}"
     else
-      puts "No winner"
-    end 
-  end 
-
+      "No winner"
+    end
+  end
 end
